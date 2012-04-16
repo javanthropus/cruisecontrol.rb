@@ -24,5 +24,11 @@ CruiseControl::Application.configure do
     CruiseControl::Log.verbose = true
     CruiseControl.require_site_config_if_needed
     require Rails.root.join('config', 'dashboard_initialize')
+
+    at_exit do
+      Rails.root.join("tmp", "pids", "builders").children.each do |pid_file|
+        Platform.kill_child_process(pid_file.read.chomp.to_i)
+      end
+    end
   end
 end
